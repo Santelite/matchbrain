@@ -35,6 +35,7 @@ def construir_dataset_features():
     # Unir ambos en un solo gran dataframe de "rendimiento por partido"
     historial_equipos = pd.concat([df_home, df_away]).sort_values(['team', 'date']).reset_index(drop=True)
 
+    print("Rolling...")
     # Definimos cuántos partidos hacia atrás queremos mirar (ej. últimos 5 partidos)
     N_PARTIDOS = 10
 
@@ -75,6 +76,7 @@ def construir_dataset_features():
     # Mide el potencial de ataque neto del Away frente a la defensa del Home
     df_final['potencial_ataque_away'] = df_final['goles_anotados_form_away'] / (df_final['goles_recibidos_form_home'] + 0.1)
 
+    print("Cálculo de ELO")
     # Calculo de Sistema ELO
     ELO_INICIAL = 1500
     FACTOR_K = 30
@@ -113,18 +115,19 @@ def construir_dataset_features():
         elo_actual[away] = r_away + FACTOR_K * (s_away - e_away)
     
     # 4. Inyectar las nuevas columnas de características al DataFrame original
-    df_final['elo_home_features'] = elo_home_antes
-    df_final['elo_away_features'] = elo_away_antes
+    df_final['elo_home'] = elo_home_antes
+    df_final['elo_away'] = elo_away_antes
 
+    print("Dataframe terminado")
     #Filtrar el dataframe final por fecha.
     df_final = df_final[df_final['date'].between('2000-01-01', '2026-06-04')]
 
     # 1. Volvemos a usar el truco de descomponer en un histórico por equipo
-    df_home = df_final[['date', 'home_team', 'goles_anotados_form_home', 'goles_recibidos_form_home']].copy()
-    df_home.columns = ['date', 'team', 'goles_anotados_form', 'goles_recibidos_form']
+    df_home = df_final[['date', 'home_team', 'goles_anotados_form_home', 'goles_recibidos_form_home','potencial_ataque_home', 'elo_home']].copy()
+    df_home.columns = ['date', 'team', 'goles_anotados_form', 'goles_recibidos_form', 'potencial_ataque', 'elo']
 
-    df_away = df_final[['date', 'away_team', 'goles_anotados_form_away', 'goles_recibidos_form_away']].copy()
-    df_away.columns = ['date', 'team', 'goles_anotados_form', 'goles_recibidos_form']
+    df_away = df_final[['date', 'away_team', 'goles_anotados_form_away', 'goles_recibidos_form_away','potencial_ataque_away', 'elo_away']].copy()
+    df_away.columns = ['date', 'team', 'goles_anotados_form', 'goles_recibidos_form', 'potencial_ataque', 'elo']
 
     # Unimos todo el histórico real y lo ordenamos por fecha
     historial_completo = pd.concat([df_home, df_away]).sort_values('date')

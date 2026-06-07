@@ -15,6 +15,7 @@ def entrenar_modelo_resultado():
         'goles_anotados_form_home', 'goles_recibidos_form_home',
         'goles_anotados_form_away', 'goles_recibidos_form_away',
         'potencial_ataque_home', 'potencial_ataque_away',
+        'elo_home', 'elo_away',
         'is_home_advantage', 'tipo_torneo'
     ]
 
@@ -79,15 +80,14 @@ def entrenar_modelo_resultado():
     rmse_away = np.sqrt(mean_squared_error(y_val_a, y_pred_a))
     print(f"El RMSE del modelo Away es: {rmse_away:.4f} goles.")
 
-    """
     lgb.plot_importance(model_home, max_num_features=10, importance_type='gain')
     plt.title("¿Qué factores influyen más en los goles locales? (HOME)")
-    plt.show()
+    plt.savefig("home.png")
 
     lgb.plot_importance(model_away, max_num_features=10, importance_type='gain')
     plt.title("¿Qué factores influyen más en los goles locales? (AWAY)")
-    plt.show()
-    """
+    plt.savefig("away.png")
+
     return model_home, model_away
 
 
@@ -107,6 +107,10 @@ def predecir_partido (model_home, model_away, pais_home, pais_away, es_neutral=F
         'goles_recibidos_form_home': racha_home['goles_recibidos_form'],
         'goles_anotados_form_away': racha_away['goles_anotados_form'],
         'goles_recibidos_form_away': racha_away['goles_recibidos_form'],
+        'potencial_ataque_home' : racha_home['potencial_ataque'],
+        'potencial_ataque_away' : racha_away['potencial_ataque'],
+        'elo_home' : racha_home['elo'],
+        'elo_away' : racha_away['elo'],
         'is_home_advantage': 0 if es_neutral else 1,
         'tipo_torneo': torneo
     }])
