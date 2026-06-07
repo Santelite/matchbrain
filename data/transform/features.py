@@ -135,6 +135,7 @@ def construir_dataset_features():
     # 2. LA MAGIA: Nos quedamos ÚNICAMENTE con la última fila de cada país
     # Al usar drop_duplicates con keep='last', conservamos solo el estado más reciente de la selección
     ultimo_partido = historial_completo.drop_duplicates(subset=['team'], keep='last').set_index('team')
+    ultimo_partido.to_csv("estado_actual.csv")
 
     return df_final
 
