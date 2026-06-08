@@ -3,6 +3,8 @@ MatchBrain es un algoritmo de predicción de resultado y cantidad de goles de pa
 
 *(quizás)
 
+---
+
 ## Capacidades
 MatchBrain actualmente realiza las siguientes predicciones:
 - Ganador del partido
@@ -11,6 +13,8 @@ MatchBrain actualmente realiza las siguientes predicciones:
 - Marcador Exacto
 
 Aparte de eso, calcula la forma actual ofensiva y defensiva, y les da a las Naciones un puntaje ELO calculado historico para todos los partidos que estén en el dataset.
+
+---
 
 ### Validación con Partidos Reales (6 y 7 de junio de 2026)
  
