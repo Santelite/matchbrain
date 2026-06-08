@@ -15,8 +15,6 @@ Aparte de eso, calcula la forma actual ofensiva y defensiva, y les da a las Naci
 ### Validación con Partidos Reales (6 y 7 de junio de 2026)
  
 Prueba realizada con partidos amistosos pre-mundialistas (El escenario más complicado para un modelo así):
- 
-Aquí está la tabla comparativa completa:
 
 | Partido | Marcador Real | Marcador Simulado | Prob. Resultado (Local/Empate/Visitante) | Goles Esperados | ¿Cumplió Over 2.5? | ¿Cumplió Resultado? | ¿Cumplió Marcador? |
 |---|---|---|---|---|---|---|---|
