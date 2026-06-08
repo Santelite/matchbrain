@@ -35,17 +35,18 @@ def entrenar_modelo_resultado():
         'metric': 'rmse',              
         'boosting_type': 'gbdt',       
         'learning_rate': 0.005,
-        'num_boost_round': 2000,
+        'num_boost_round': 2500,
         'num_leaves': 15,              
-        'min_data_in_leaf': 50,       
+        'min_data_in_leaf': 100,       
         'lambda_l1': 1.5,              
-        'lambda_l2': 1.5,              
+        'lambda_l2': 5,              
         'feature_fraction': 0.6,
+        'poisson_max_delta_step': 0.4,
+        'colsample_bytree': 0.6,
         'verbose': -1
     }
 
     
-    print("Entrenando Modelo Home Goles...")
     X_train_h, X_val_h, y_train_h, y_val_h = train_test_split(X, y_home, test_size=0.2, random_state=42)
     train_data_h = lgb.Dataset(X_train_h, label=y_train_h)
     val_data_h = lgb.Dataset(X_val_h, label=y_val_h, reference=train_data_h)
@@ -62,8 +63,7 @@ def entrenar_modelo_resultado():
     rmse_home = np.sqrt(mean_squared_error(y_val_h, y_pred_h))
     print(f"\nEl RMSE del modelo Home es: {rmse_home:.4f} goles.")
 
-    
-    print("\nEntrenando Modelo Away Goles...")
+
     X_train_a, X_val_a, y_train_a, y_val_a = train_test_split(X, y_away, test_size=0.2, random_state=42)
     train_data_a = lgb.Dataset(X_train_a, label=y_train_a)
     val_data_a = lgb.Dataset(X_val_a, label=y_val_a, reference=train_data_a)
@@ -80,16 +80,44 @@ def entrenar_modelo_resultado():
     rmse_away = np.sqrt(mean_squared_error(y_val_a, y_pred_a))
     print(f"El RMSE del modelo Away es: {rmse_away:.4f} goles.")
 
-    lgb.plot_importance(model_home, max_num_features=10, importance_type='gain')
-    plt.title("¿Qué factores influyen más en los goles locales? (HOME)")
-    plt.savefig("home.png")
+    def _plot_importance_dark(model, filename, title, max_features=10):
+        try:
+            n_feats = min(max_features, len(model.feature_name()))
+        except Exception:
+            n_feats = max_features
 
-    lgb.plot_importance(model_away, max_num_features=10, importance_type='gain')
-    plt.title("¿Qué factores influyen más en los goles locales? (AWAY)")
-    plt.savefig("away.png")
+        width = 8
+        height = max(3, 0.6 * n_feats + 1.0)
 
+        fig, ax = plt.subplots(figsize=(width, height))
+        fig.patch.set_facecolor('black')
+        ax.set_facecolor('black')
+
+        lgb.plot_importance(model, ax=ax, max_num_features=max_features, importance_type='gain', title=None)
+
+        ax.set_title(title, color='white')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        ax.tick_params(colors='white', which='both')
+        for spine in ax.spines.values():
+            spine.set_color('white')
+
+        for patch in ax.patches:
+            try:
+                patch.set_edgecolor('white')
+            except Exception:
+                pass
+
+        plt.savefig(filename, bbox_inches='tight', facecolor=fig.get_facecolor())
+        plt.close(fig)
+
+    """
+    _plot_importance_dark(model_home, "home.png", "¿Qué factores influyen más en los goles locales? (HOME)")
+    _plot_importance_dark(model_away, "away.png", "¿Qué factores influyen más en los goles locales? (AWAY)")
+    """
+    
     return model_home, model_away
-
+    
 
 def predecir_partido (model_home, model_away, pais_home, pais_away, es_neutral=False, torneo='amistoso'):
     estado_actual_paises = get_historial()
@@ -123,7 +151,8 @@ def predecir_partido (model_home, model_away, pais_home, pais_away, es_neutral=F
     
     lambda_total = lambda_away + lambda_home
 
-    print(f"Simulación: {pais_home} vs {pais_away}\n\n")
+    print("===========================================\n")
+    print(f"Simulación: {pais_home} vs {pais_away}\n")
 
     print(f"=== EXPECTATIVA DE GOLES ===")
     print(f"Goles esperados {pais_home}: {lambda_home:.2f}")
