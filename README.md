@@ -1,5 +1,5 @@
 # MatchBrain
-MatchBrain es un algoritmo de predicción de resultado y cantidad de goles, utilizando LightGBM (Light Gradient-Boosting Machine) el cual es un aloritmo de Machine Learning basado en arboles de decisión. El modelo está entrenado con un dataset que incluyen todos los partidos internacionales de naciones jugados, desde amistosos hasta mundiales, pero el modelo ya se presta para entrenarse con datos de Clubes*.
+MatchBrain es un algoritmo de predicción de resultado y cantidad de goles de partidos de futbol escrito en Python, utilizando LightGBM (Light Gradient-Boosting Machine) el cual es un aloritmo de Machine Learning basado en arboles de decisión. El modelo está entrenado con un dataset que incluyen todos los partidos internacionales de naciones jugados, desde amistosos hasta mundiales, pero el modelo ya se presta para entrenarse con datos de Clubes*.
 
 *(quizás)
 
