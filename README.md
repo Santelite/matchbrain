@@ -222,7 +222,7 @@ En codigo todo esto se ve así:
 
 Curiosamente, aparte del ELO propio, el modelo encontró que importa más que tan débil es la defensa del rival, sobre que tan poderosa es la ofensa propia, de igual forma tienen un poco de influencia los factores del contexto (Terreno neutral, Tipo del torneo)
 
-##Límites 
+## Límites 
 La arquitectura de dos modelos separados funciona excepcionalmente bien pero asume una regla que fútbol real viola constantemente: que los goles del equipo local y los del visitante son **eventos independientes**, En la práctica, un gol en el minuto 5 cambia por completo la postura táctica de ambos equipos. Aún así, el modelo ha probado ser bastante acertado y tiene suficientes datos para producir buenas predicciones.
 
 ## Desplegar por tu cuenta
