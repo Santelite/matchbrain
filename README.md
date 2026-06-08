@@ -39,8 +39,6 @@ Prueba realizada con partidos amistosos pre-mundialistas (El escenario más comp
 | Brazil vs Egypt | 2 - 1 | 1 - 0 | 56% / 24% / 20% | 2.60 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ❌ No |
 | Argentina vs Honduras | 2 - 0 | 2 - 0 | 76% / 16% / 8% | 2.83 ✅ | ❌ No (2 goles) | ✅ Sí (L) | ✅ Sí |
 
----
-
 ### Resumen General
 
 | Métrica | Aciertos | Total | % Acierto |
@@ -48,6 +46,7 @@ Prueba realizada con partidos amistosos pre-mundialistas (El escenario más comp
 | Resultado (L/E/V) | 13 | 20 | **65%** |
 | Marcador Exacto | 6 | 20 | **30%** |
 | Over 2.5 goles | 11 | 20 | **55%** |
+
 ---
 
 # Introducción
@@ -56,6 +55,8 @@ El Fútbol es un deporte caotico e impredecible, y eso lo hace particularmente i
 Debido a esto, se hace un deporte bastante ideal para ajustar a un modelo de Machine Learning, ya que ahora las computadoras son capaces de procesar millones de datos por segundo y encontrar patrones complejos en grandes cantidades de datos, cosa que a un humano puede tomarle mucho tiempo.
 
 La idea con MatchBrain era combinar mi pasión por el fútbol con mi fascinación con la Ciencia de Datos y el Machine Learning. Mi objetivo final era aprender más sobre la parte analítca del fútbol y encontrar patrones que nunca se me habrían ocurrido por mi cuenta. Ningún modelo es perfecto, pero creo que he logrado hacer algo util, bastante liviano, y descubriendo algún que otro dato interesante.
+
+---
 
 # Como funciona?
 
@@ -245,8 +246,12 @@ En codigo todo esto se ve así:
 
 Curiosamente, aparte del ELO propio, el modelo encontró que importa más que tan débil es la defensa del rival, sobre que tan poderosa es la ofensa propia, de igual forma tienen un poco de influencia los factores del contexto (Terreno neutral, Tipo del torneo)
 
-## Límites 
+---
+
+### Límites 
 La arquitectura de dos modelos separados funciona excepcionalmente bien pero asume una regla que fútbol real viola constantemente: que los goles del equipo local y los del visitante son **eventos independientes**, En la práctica, un gol en el minuto 5 cambia por completo la postura táctica de ambos equipos. Aún así, el modelo ha probado ser bastante acertado y tiene suficientes datos para producir buenas predicciones.
+
+---
 
 ## Desplegar por tu cuenta
 Se requiere Python 3.12+ preferiblemente con venv. Despues de clonar el repositorio (asumiendo que estes en la carpeta raiz) puedes realizar:
@@ -256,10 +261,13 @@ pip install -r requirements.txt
 python app.py
 ```
 
+---
 
 ## Preguntas Frecuentes
 ### Si pero porque?
 Estaba aburrido.
+
+---
 
 ## Planes
 Crear un frontend en html y adaptar el modelo a una API REST para desplegar una pagina web.
