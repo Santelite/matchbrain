@@ -12,19 +12,44 @@ MatchBrain actualmente realiza las siguientes predicciones:
 
 Aparte de eso, calcula la forma actual ofensiva y defensiva, y les da a las Naciones un puntaje ELO calculado historico para todos los partidos que estén en el dataset.
 
-## Validación con Partidos Reales (7 de junio de 2026)
+### Validación con Partidos Reales (6 y 7 de junio de 2026)
  
 Prueba realizada con partidos amistosos pre-mundialistas (El escenario más complicado para un modelo así):
  
-| Partido | Predicción | Resultado Real | Acierto |
+Aquí está la tabla comparativa completa:
+
+| Partido | Marcador Real | Marcador Simulado | Prob. Resultado (Local/Empate/Visitante) | Goles Esperados | ¿Cumplió Over 2.5? | ¿Cumplió Resultado? | ¿Cumplió Marcador? |
+|---|---|---|---|---|---|---|---|
+| Ecuador vs Guatemala | 3 - 0 | 1 - 0 | 67% / 21% / 12% | 2.64 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ❌ No |
+| Greece vs Italy | 0 - 1 | 1 - 1 | 23% / 23% / 54% | 2.96 ✅ | ❌ No (1 gol) | ✅ Sí (V) | ❌ No |
+| Colombia vs Jordan | 2 - 0 | 2 - 0 | 65% / 20% / 15% | 2.97 ✅ | ❌ No (2 goles) | ✅ Sí (L) | ✅ Sí |
+| Denmark vs Ukraine | 2 - 1 | 1 - 0 | 56% / 23% / 21% | 2.79 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ❌ No |
+| Morocco vs Norway | 1 - 1 | 1 - 1 | 44% / 27% / 30% | 2.52 ✅ | ❌ No (2 goles) | ✅ Sí (E) | ✅ Sí |
+| Kosovo vs Andorra | 3 - 0 | 3 - 0 | 89% / 8% / 3% | 3.62 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ✅ Sí |
+| Armenia vs Kazakhstan | 1 - 1 | 1 - 2 | 14% / 18% / 68% | 3.47 ✅ | ❌ Sí (2 goles) | ❌ No (E) | ❌ No |
+| Estonia vs Faroe Islands | 1 - 0 | 1 - 1 | 37% / 28% / 35% | 2.41 ❌ | ❌ No (1 gol) | ✅ Sí (L) | ❌ No |
+| Gibraltar vs Cayman Islands | 4 - 1 | 1 - 1 | 33% / 26% / 41% | 2.64 ✅ | ✅ Sí (5 goles) | ❌ No (L) | ❌ No |
+| Portugal vs Chile | 2 - 1 | 1 - 0 | 60% / 22% / 18% | 2.73 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ❌ No |
+| Romania vs Wales | 2 - 1 | 1 - 1 | 29% / 27% / 44% | 2.42 ❌ | ✅ Sí (3 goles) | ❌ No (V) | ❌ No |
+| Albania vs Luxembourg | 0 - 1 | 1 - 0 | 62% / 23% / 15% | 2.48 ❌ | ❌ No (1 gol) | ❌ No (V) | ❌ No |
+| USA vs Germany | 1 - 2 | 1 - 1 | 23% / 22% / 55% | 3.18 ✅ | ✅ Sí (3 goles) | ✅ Sí (V) | ❌ No |
+| Panama vs Bosnia and Herzegovina | 1 - 1 | 1 - 1 | 51% / 25% / 24% | 2.58 ✅ | ❌ No (2 goles) | ✅ Sí (E) | ✅ Sí |
+| Switzerland vs Australia | 1 - 1 | 1 - 1 | 44% / 26% / 30% | 2.65 ✅ | ❌ No (2 goles) | ✅ Sí (E) | ✅ Sí |
+| Bolivia vs Scotland | 0 - 4 | 1 - 1 | 29% / 27% / 43% | 2.42 ❌ | ✅ Sí (4 goles) | ✅ Sí (V) | ❌ No |
+| England vs New Zealand | 1 - 0 | 2 - 0 | 75% / 17% / 8% | 2.80 ✅ | ❌ No (1 gol) | ✅ Sí (L) | ❌ No |
+| Qatar vs El Salvador | 0 - 0 | 1 - 0 | 54% / 26% / 20% | 2.32 ❌ | ❌ No (0 goles) | ❌ No (E) | ❌ No |
+| Brazil vs Egypt | 2 - 1 | 1 - 0 | 56% / 24% / 20% | 2.60 ✅ | ✅ Sí (3 goles) | ✅ Sí (L) | ❌ No |
+| Argentina vs Honduras | 2 - 0 | 2 - 0 | 76% / 16% / 8% | 2.83 ✅ | ❌ No (2 goles) | ✅ Sí (L) | ✅ Sí |
+
+---
+
+### Resumen General
+
+| Métrica | Aciertos | Total | % Acierto |
 |---|---|---|---|
-| Portugal vs Chile | Victoria Portugal ~49% | Portugal 2-1 | ✅ Ganador |
-| Argentina vs Honduras | Victoria Argentina ~49%, 1-0 | Argentina 2-0 | ✅ Ganador + Solidez defensiva |
-| Suiza vs Australia | Empate 1-1 (50%/24%) | Suiza 1-1 | ✅ Marcador exacto |
-| USA vs Alemania | Partido abierto >2.5 goles | USA 1-2 | ✅ Over + Ganador |
-| Qatar vs El Salvador | Partido cerrado, empate probable | 0-0 | ✅ Empate sin goles |
-| Brasil vs Egipto | Victoria Brasil ~45% | Brasil 2-1 | ✅ Ganador |
- 
+| Resultado (L/E/V) | 13 | 20 | **65%** |
+| Marcador Exacto | 6 | 20 | **30%** |
+| Over 2.5 goles | 11 | 20 | **55%** |
 ---
 
 # Introducción
