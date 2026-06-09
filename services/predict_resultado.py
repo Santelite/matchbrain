@@ -2,10 +2,11 @@ import lightgbm as lgb
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
+import joblib
 from scipy.stats import poisson
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-from data.transform.features import construir_dataset_features, get_historial
+from data.features.partido_features import construir_dataset_features, get_historial
 
 df_final = construir_dataset_features()
 
@@ -115,12 +116,20 @@ def entrenar_modelo_resultado():
     _plot_importance_dark(model_home, "home.png", "¿Qué factores influyen más en los goles locales? (HOME)")
     _plot_importance_dark(model_away, "away.png", "¿Qué factores influyen más en los goles locales? (AWAY)")
     """
+
+    # Guardar los modelos de LightGBM en archivos físicos
+    joblib.dump(model_home, 'model_home.pkl')
+    joblib.dump(model_away, 'model_away.pkl')
+
+    # Guardar el DataFrame de estados actuales de los países
+    get_historial().to_pickle('estado_actual_paises.pkl')
     
     return model_home, model_away
     
 
 def predecir_partido (model_home, model_away, pais_home, pais_away, es_neutral=False, torneo='amistoso'):
     estado_actual_paises = get_historial()
+
     if pais_home not in estado_actual_paises.index or pais_away not in estado_actual_paises.index:
         print("Uno de los países no se encuentra en el dataset histórico.")
         return

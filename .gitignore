@@ -5,3 +5,20 @@ __pycache__/
 *.pyc
 
 estado_actual.csv
+
+.venv/
+
+instance/
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+dist/
+build/
+*.egg-info/
+
+*.pkl
+
+away.png
+home.png
