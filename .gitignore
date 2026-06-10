@@ -18,7 +18,5 @@ dist/
 build/
 *.egg-info/
 
-*.pkl
-
 away.png
 home.png
