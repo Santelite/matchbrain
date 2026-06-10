@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import os
 import joblib
 import pandas as pd
 import numpy as np
@@ -6,8 +7,9 @@ from scipy.stats import poisson
 
 predecir = Blueprint('predict', __name__)
 
-model_home = joblib.load('model_home.pkl')
-model_away = joblib.load('model_away.pkl')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_home = joblib.load(os.path.join(BASE_DIR, '..', 'model_home.pkl'))
+model_away = joblib.load(os.path.join(BASE_DIR, '..', 'model_away.pkl'))
 estado_paises = pd.read_pickle('estado_actual_paises.pkl')
 
 @predecir.route('/elo', methods=['GET'])
