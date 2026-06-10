@@ -4,6 +4,24 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>MatchBrain | Motor de predicción de fútbol</title>
+
+    <!-- Facebook / LinkedIn Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="MatchBrain | Motor de predicción de fútbol">
+    <meta property="og:description" content="Algoritmo de predicción de resultados y goles de fútbol impulsado por Machine Learning (LightGBM).">
+    <!-- Flask dynamically generates the full absolute URL to your image -->
+    <meta property="og:image" content="{{ url_for('static', filename='images/thumb.png', _external=True) }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request.url }}">
+    <meta name="twitter:title" content="MatchBrain | Motor de predicción de fútbol">
+    <meta name="twitter:description" content="Algoritmo de predicción de resultados y goles de fútbol impulsado por Machine Learning (LightGBM).">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/thumb.png', _external=True) }}">
+
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
