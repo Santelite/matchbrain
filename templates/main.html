@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MatchBrain | Motor de predicción de fútbol</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #051424; /* surface-dim */
+        }
+        .glass-card {
+            background: rgba(22, 34, 56, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(45, 61, 90, 0.3);
+        }
+        .neon-glow {
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+        }
+        .form-input-focus {
+            transition: all 0.3s ease;
+        }
+        .form-input-focus:focus {
+            background: rgba(57, 255, 20, 0.05);
+            border-color: #39ff14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
+        }
+        .pulse-live {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "secondary-fixed-dim": "#00dbe7",
+                "secondary-fixed": "#74f5ff",
+                "inverse-primary": "#106e00",
+                "surface-container": "#122131",
+                "tertiary-fixed": "#dae2fc",
+                "tertiary": "#faf9ff",
+                "secondary": "#ddfcff",
+                "surface-dim": "#051424",
+                "primary-fixed-dim": "#2ae500",
+                "tertiary-fixed-dim": "#bec6df",
+                "secondary-container": "#00f1fe",
+                "error": "#ffb4ab",
+                "on-background": "#d4e4fa",
+                "surface-container-low": "#0d1c2d",
+                "surface-variant": "#273647",
+                "on-primary": "#053900",
+                "surface-tint": "#2ae500",
+                "error-container": "#93000a",
+                "surface": "#051424",
+                "inverse-on-surface": "#233143",
+                "on-secondary-fixed": "#002022",
+                "primary": "#efffe3",
+                "on-tertiary-container": "#586176",
+                "on-surface-variant": "#baccb0",
+                "primary-container": "#39ff14",
+                "on-primary-container": "#107100",
+                "inverse-surface": "#d4e4fa",
+                "primary-fixed": "#79ff5b",
+                "on-secondary": "#00363a",
+                "on-tertiary-fixed-variant": "#3e475b",
+                "on-error-container": "#ffdad6",
+                "on-secondary-fixed-variant": "#004f54",
+                "on-primary-fixed": "#022100",
+                "on-primary-fixed-variant": "#095300",
+                "surface-bright": "#2c3a4c",
+                "on-surface": "#d4e4fa",
+                "background": "#051424",
+                "outline-variant": "#3c4b35",
+                "on-error": "#690005",
+                "surface-container-high": "#1c2b3c",
+                "surface-container-lowest": "#010f1f",
+                "tertiary-container": "#d5ddf6",
+                "outline": "#85967c"
+              },
+              "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "xs": "4px",
+                "container-margin": "20px",
+                "base": "4px",
+                "sm": "8px",
+                "xl": "40px",
+                "md": "16px",
+                "lg": "24px",
+                "gutter": "16px"
+              },
+              "fontFamily": {
+                "body-sm": ["Montserrat"],
+                "stats-number": ["Montserrat"],
+                "headline-md": ["Montserrat"],
+                "display-lg": ["Montserrat"],
+                "headline-lg-mobile": ["Montserrat"],
+                "headline-lg": ["Montserrat"],
+                "body-lg": ["Montserrat"],
+                "label-bold": ["Montserrat"]
+              },
+              "fontSize": {
+                "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "stats-number": ["24px", {"lineHeight": "1.0", "fontWeight": "800"}],
+                "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-bold": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "700"}]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-surface-dim text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface-container-low dark:bg-surface-container-low fixed top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-container-margin py-md max-w-7xl mx-auto">
+<h1 class="font-display-lg text-headline-lg-mobile font-black text-primary-container tracking-tighter">
+                MatchBrain
+            </h1>
+<div class="flex items-center gap-md">
+<a href="https://github.com/Santelite/matchbrain/" target="_blank" rel="noopener noreferrer" class="text-primary-fixed-dim hover:text-primary-container transition-transform active:scale-95 inline-flex" aria-label="GitHub Repository">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+</a>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-24 pb-xl px-container-margin w-full max-w-5xl mx-auto flex flex-col gap-lg">
+<!-- Integrated Prediction Form -->
+<section class="glass-card rounded-lg p-md shadow-lg">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md items-end">
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-[10px] text-on-surface-variant uppercase tracking-wider ml-1">Equipo Local</label>
+<input id="home-team" class="form-input-focus cursor-pointer bg-surface-container-lowest/30 border-outline-variant/30 text-on-surface rounded-md focus:ring-0 font-body-lg text-body-sm px-md py-sm w-full" type="text" value="Argentina" readonly/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-[10px] text-on-surface-variant uppercase tracking-wider ml-1">Equipo Visitante</label>
+<input id="away-team" class="form-input-focus cursor-pointer bg-surface-container-lowest/30 border-outline-variant/30 text-on-surface rounded-md focus:ring-0 font-body-lg text-body-sm px-md py-sm w-full" type="text" value="Honduras" readonly/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-[10px] text-on-surface-variant uppercase tracking-wider ml-1">Torneo</label>
+<div class="relative">
+<select id="tournament" class="form-input-focus bg-surface-container-lowest/30 border-outline-variant/30 text-on-surface rounded-md focus:ring-0 font-body-lg text-body-sm px-md py-sm w-full appearance-none">
+<option value="amistoso">Amistoso Internacional</option>
+<option value="oficial_continental">Clasificatorias Mundial / Continental</option>
+<option value="mundial">Copa del Mundo</option>
+<option value="otros_torneos">Otros Torneos</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-sm">expand_more</span>
+</div>
+</div>
+<div class="flex items-center justify-between bg-surface-container-lowest/20 rounded-md px-md py-sm border border-outline-variant/30">
+<label class="font-label-bold text-[10px] text-on-surface-variant uppercase tracking-wider">Neutral</label>
+<label class="relative inline-flex items-center cursor-pointer">
+<input id="neutral-venue" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</section>
+
+<div id="results-container" class="hidden flex-col gap-lg w-full">
+<!-- Enlarged Scoreboard Section -->
+<section class="flex flex-col items-center py-md">
+<div class="text-center mb-sm">
+<span class="font-label-bold text-label-bold text-secondary-fixed-dim uppercase tracking-[0.3em] opacity-90">Más Probable</span>
+</div>
+<div class="relative flex items-center justify-center py-lg">
+<!-- Background Glow -->
+<div class="absolute inset-0 bg-primary-container/10 rounded-full blur-[80px] w-64 h-64 mx-auto"></div>
+<!-- Score Display -->
+<div class="relative z-10 flex items-center gap-xl">
+<div class="flex flex-col items-center">
+<span id="home-score-pred" class="font-display-lg text-[96px] leading-none font-black text-on-surface tracking-tighter neon-glow">2</span>
+</div>
+<span class="font-display-lg text-[64px] leading-none font-black text-primary-container opacity-50">-</span>
+<div class="flex flex-col items-center">
+<span id="away-score-pred" class="font-display-lg text-[96px] leading-none font-black text-on-surface tracking-tighter neon-glow">0</span>
+</div>
+</div>
+</div>
+<div class="mt-md">
+<div class="bg-surface-container-high/40 backdrop-blur-md px-lg py-sm rounded-full border border-primary-container/10">
+<span class="font-label-bold text-body-sm text-on-surface-variant">Probabilidad de Empate: <span id="draw-prob" class="text-primary-container font-extrabold ml-1">13.11%</span></span>
+</div>
+</div>
+</section>
+<!-- Team Stats Grid -->
+<section class="grid grid-cols-2 gap-md">
+<div class="glass-card rounded-lg p-md relative overflow-hidden flex flex-col items-center text-center">
+<div class="absolute inset-0 opacity-10 pointer-events-none scale-150"></div>
+<h3 id="home-name" class="font-headline-md text-headline-md font-bold text-on-surface mb-xs relative">Argentina</h3>
+<div id="home-elo" class="font-label-bold text-[16px] text-primary-fixed-dim opacity-70 mb-md relative">ELO 1850</div>
+<div class="flex flex-col gap-md relative w-full">
+<div class="flex flex-col">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Prob. Victoria</span>
+<span id="home-win-prob" class="font-stats-number text-stats-number text-primary-container">77.78%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Goles Esperados</span>
+<span id="home-exp-goals" class="font-stats-number text-stats-number text-on-surface">2.49</span>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-lg p-md relative overflow-hidden flex flex-col items-center text-center">
+<div class="absolute inset-0 opacity-10 pointer-events-none scale-150"></div>
+<h3 id="away-name" class="font-headline-md text-headline-md font-bold text-on-surface mb-xs relative">Honduras</h3>
+<div id="away-elo" class="font-label-bold text-[16px] text-primary-fixed-dim opacity-70 mb-md relative">ELO 1420</div>
+<div class="flex flex-col gap-md relative w-full">
+<div class="flex flex-col">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Prob. Victoria</span>
+<span id="away-win-prob" class="font-stats-number text-stats-number text-on-surface">4.94%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Goles Esperados</span>
+<span id="away-exp-goals" class="font-stats-number text-stats-number text-on-surface">0.46</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Goals Banner -->
+<div class="glass-card rounded-lg py-sm px-md border-primary-container/20 flex items-center justify-center bg-primary-container/5">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container scale-75">sports_soccer</span>
+<span id="over-under-pred" class="font-label-bold text-body-sm text-primary-container uppercase tracking-widest">Predicción: Más de 2.5 Goles</span>
+</div>
+</div>
+<!-- Match Dynamics Section -->
+<section class="glass-card rounded-lg p-lg">
+<h4 class="text-on-surface font-headline-md text-headline-md text-center mb-lg">Dinámicas del Partido</h4>
+<div class="flex flex-col sm:flex-row items-stretch gap-lg sm:gap-md">
+<!-- Argentina -->
+<div class="flex-1 flex flex-col gap-md">
+<h3 id="dyn-home-name" class="font-label-bold text-label-bold text-primary-container uppercase tracking-wider mb-sm">Argentina</h3>
+
+<!-- Forma Ofensiva -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Ofensiva</span>
+<span id="home-off-text" class="text-[12px] font-bold text-primary-container">2.5</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div id="home-off-bar" class="h-full bg-gradient-to-r from-primary-container to-secondary-container shadow-[0_0_8px_rgba(57,255,20,0.5)] transition-all duration-1000" style="width: 82%"></div>
+</div>
+</div>
+
+<!-- Forma Defensiva -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Defensiva</span>
+<span id="home-def-text" class="text-[12px] font-bold text-primary-container">0.8</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div id="home-def-bar" class="h-full bg-primary-container/60 transition-all duration-1000" style="width: 78%"></div>
+</div>
+</div>
+
+<!-- Potencial Ataque -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Potencial de Ataque</span>
+<span id="home-pot-text" class="text-[12px] font-bold text-primary-container">1.8</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div id="home-pot-bar" class="h-full bg-gradient-to-r from-primary-container to-secondary-container transition-all duration-1000" style="width: 85%"></div>
+</div>
+</div>
+</div>
+
+<!-- Separador (Desktop) -->
+<div class="w-px bg-outline-variant/30 hidden sm:block mx-md"></div>
+<!-- Separador (Mobile) -->
+<div class="h-px w-full bg-outline-variant/30 sm:hidden my-xs"></div>
+
+<!-- Honduras -->
+<div class="flex-1 flex flex-col gap-md text-left sm:text-right">
+<h3 id="dyn-away-name" class="font-label-bold text-label-bold text-secondary-fixed-dim uppercase tracking-wider mb-sm">Honduras</h3>
+
+<!-- Forma Ofensiva -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between sm:flex-row-reverse">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Ofensiva</span>
+<span id="away-off-text" class="text-[12px] font-bold text-secondary-fixed-dim">1.2</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden flex sm:justify-end">
+<div id="away-off-bar" class="h-full bg-gradient-to-r sm:bg-gradient-to-l from-secondary-fixed-dim to-primary-container opacity-80 transition-all duration-1000" style="width: 35%"></div>
+</div>
+</div>
+
+<!-- Forma Defensiva -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between sm:flex-row-reverse">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Defensiva</span>
+<span id="away-def-text" class="text-[12px] font-bold text-secondary-fixed-dim">1.5</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden flex sm:justify-end">
+<div id="away-def-bar" class="h-full bg-secondary-fixed-dim/60 transition-all duration-1000" style="width: 41%"></div>
+</div>
+</div>
+
+<!-- Potencial Ataque -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between sm:flex-row-reverse">
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Potencial de Ataque</span>
+<span id="away-pot-text" class="text-[12px] font-bold text-secondary-fixed-dim">0.9</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden flex sm:justify-end">
+<div id="away-pot-bar" class="h-full bg-gradient-to-r sm:bg-gradient-to-l from-secondary-fixed-dim to-primary-container opacity-60 transition-all duration-1000" style="width: 30%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Decorative Action -->
+<div class="flex justify-center mt-md">
+<button id="predict-btn" type="button" class="group flex items-center gap-md bg-surface-container-high px-lg py-md rounded-full border border-outline-variant hover:border-primary-container transition-all active:scale-95 shadow-lg">
+<span class="font-label-bold text-label-bold text-on-surface group-hover:text-primary-container transition-colors uppercase tracking-widest">Generar Predicción</span>
+<span class="material-symbols-outlined text-primary-container group-hover:rotate-180 transition-transform duration-500">refresh</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/30 py-lg mt-auto">
+<div class="flex flex-col items-center px-container-margin w-full max-w-7xl mx-auto gap-md">
+<span class="font-headline-md text-headline-md text-on-surface opacity-80">MatchBrain</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant opacity-60">© 2026 Santelite. Solo por el amor al juego.</p>
+</div>
+</footer>
+
+<!-- Country Selection Modal -->
+<div id="country-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div class="glass-card w-full max-w-lg rounded-2xl flex flex-col max-h-[80vh] overflow-hidden shadow-2xl">
+        <div class="p-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low">
+            <h2 class="font-headline-md text-headline-md text-on-surface">Seleccionar Equipo</h2>
+            <button id="close-modal" type="button" class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">close</button>
+        </div>
+        <div class="p-4 bg-surface-container-lowest">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input id="country-search" type="text" placeholder="Buscar país..." class="w-full bg-surface-container/50 border border-outline-variant/50 rounded-lg pl-10 pr-4 py-2 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all outline-none">
+            </div>
+        </div>
+        <div class="overflow-y-auto flex-grow p-2" id="country-list">
+            <!-- Countries will be injected here -->
+        </div>
+    </div>
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const predictBtn = document.getElementById('predict-btn');
+            
+            predictBtn.addEventListener('click', async (e) => {
+                e.preventDefault(); // Prevents accidental form submissions or page reloads
+                
+                const homeTeam = document.getElementById('home-team').value;
+                const awayTeam = document.getElementById('away-team').value;
+                const tournament = document.getElementById('tournament').value;
+                const neutral = document.getElementById('neutral-venue').checked;
+                
+                // Disable button to prevent request spam or loops
+                predictBtn.disabled = true;
+                predictBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                try {
+                    const response = await fetch('/api/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            home_team: homeTeam,
+                            away_team: awayTeam,
+                            tipo_torneo: tournament,
+                            neutral: neutral
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        alert('Error: ' + (errData.error || 'Solicitud fallida'));
+                        return;
+                    }
+                    
+                    const data = await response.json();
+                    updateUI(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al obtener la predicción');
+                } finally {
+                    predictBtn.disabled = false;
+                    predictBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            function updateUI(data) {
+                const resultsContainer = document.getElementById('results-container');
+                resultsContainer.classList.remove('hidden');
+                resultsContainer.classList.add('flex');
+
+                const scores = data.marcador_mas_probable.split(' - ');
+                document.getElementById('home-score-pred').innerText = scores[0];
+                document.getElementById('away-score-pred').innerText = scores[1];
+                
+                document.getElementById('draw-prob').innerText = data.probabilidades_1X2.empate;
+                
+                const teams = data.partido.split(' vs ');
+                document.getElementById('home-name').innerText = teams[0];
+                document.getElementById('away-name').innerText = teams[1];
+                document.getElementById('dyn-home-name').innerText = teams[0];
+                document.getElementById('dyn-away-name').innerText = teams[1];
+                
+                document.getElementById('home-elo').innerText = 'ELO ' + Math.round(data.elo.local);
+                document.getElementById('away-elo').innerText = 'ELO ' + Math.round(data.elo.visitante);
+                
+                document.getElementById('home-win-prob').innerText = data.probabilidades_1X2.local;
+                document.getElementById('away-win-prob').innerText = data.probabilidades_1X2.visitante;
+                
+                document.getElementById('home-exp-goals').innerText = data.expectativa_goles.local;
+                document.getElementById('away-exp-goals').innerText = data.expectativa_goles.visitante;
+                
+                const isOver25 = data.expectativa_goles.totales_esperados > 2.5;
+                document.getElementById('over-under-pred').innerText = isOver25 ? 'Predicción: Más de 2.5 Goles' : 'Predicción: Menos de 2.5 Goles';
+                
+                const maxGoals = 4.0; 
+                const hOff = data.formas.local.ofensiva.toFixed(2);
+                const hDef = data.formas.local.defensiva.toFixed(2);
+                const aOff = data.formas.visitante.ofensiva.toFixed(2);
+                const aDef = data.formas.visitante.defensiva.toFixed(2);
+                const hPot = data.formas.local.potencial_ataque.toFixed(2);
+                const aPot = data.formas.visitante.potencial_ataque.toFixed(2);
+                
+                document.getElementById('home-off-text').innerText = hOff;
+                document.getElementById('home-def-text').innerText = hDef;
+                document.getElementById('home-pot-text').innerText = hPot;
+                document.getElementById('away-off-text').innerText = aOff;
+                document.getElementById('away-def-text').innerText = aDef;
+                document.getElementById('away-pot-text').innerText = aPot;
+                
+                document.getElementById('home-off-bar').style.width = Math.min((data.formas.local.ofensiva / maxGoals) * 100, 100) + '%';
+                document.getElementById('home-def-bar').style.width = Math.min((data.formas.local.defensiva / maxGoals) * 100, 100) + '%';
+                document.getElementById('away-off-bar').style.width = Math.min((data.formas.visitante.ofensiva / maxGoals) * 100, 100) + '%';
+                document.getElementById('away-def-bar').style.width = Math.min((data.formas.visitante.defensiva / maxGoals) * 100, 100) + '%';
+                
+                const maxPotencial = 3.0; // Umbral máximo base para calcular el % visual
+                document.getElementById('home-pot-bar').style.width = Math.min((data.formas.local.potencial_ataque / maxPotencial) * 100, 100) + '%';
+                document.getElementById('away-pot-bar').style.width = Math.min((data.formas.visitante.potencial_ataque / maxPotencial) * 100, 100) + '%';
+
+                animateStats();
+            }
+
+            function animateStats() {
+                const stats = document.querySelectorAll('.font-stats-number');
+                stats.forEach(stat => {
+                    const finalValue = parseFloat(stat.innerText);
+                    if (isNaN(finalValue)) return;
+                    
+                    let start = 0;
+                    const duration = 1200;
+                    const startTime = performance.now();
+                    const isPercentage = stat.innerText.includes('%');
+
+                    function update(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const easeOutQuad = t => t * (2 - t);
+                        const current = progress === 1 ? finalValue : (start + (finalValue - start) * easeOutQuad(progress));
+                        
+                        stat.innerText = current.toFixed(2) + (isPercentage ? '%' : '');
+
+                        if (progress < 1) {
+                            requestAnimationFrame(update);
+                        }
+                    }
+                    requestAnimationFrame(update);
+                });
+            }
+
+            // Modal Logic
+            let eloData = null;
+            let currentTargetInput = null;
+            
+            const homeInput = document.getElementById('home-team');
+            const awayInput = document.getElementById('away-team');
+            const modal = document.getElementById('country-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const searchInput = document.getElementById('country-search');
+            const countryList = document.getElementById('country-list');
+            
+            async function fetchEloData() {
+                if (eloData) return eloData;
+                try {
+                    const response = await fetch('/api/elo');
+                    const data = await response.json();
+                    eloData = Object.entries(data.elo).map(([name, elo]) => ({ name, elo: Math.round(elo) }));
+                    return eloData;
+                } catch (error) {
+                    console.error('Error fetching ELO data:', error);
+                    return [];
+                }
+            }
+            
+            function renderCountryList(countries) {
+                countryList.innerHTML = '';
+                countries.forEach(country => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-3 hover:bg-surface-container-high/50 cursor-pointer rounded-lg transition-colors border-b border-outline-variant/10 last:border-0';
+                    div.innerHTML = `
+                        <span class="font-body-lg text-on-surface font-semibold">${country.name}</span>
+                        <span class="font-label-bold text-xs text-primary-fixed-dim bg-primary-fixed-dim/10 px-2 py-1 rounded">ELO ${country.elo}</span>
+                    `;
+                    div.addEventListener('click', () => {
+                        if (currentTargetInput) {
+                            currentTargetInput.value = country.name;
+                        }
+                        closeModal();
+                    });
+                    countryList.appendChild(div);
+                });
+            }
+            
+            function openModal(targetInput) {
+                currentTargetInput = targetInput;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                searchInput.value = '';
+                
+                countryList.innerHTML = '<div class="p-4 text-center text-on-surface-variant"><span class="material-symbols-outlined animate-spin pulse-live">refresh</span></div>';
+                
+                fetchEloData().then(countries => {
+                    renderCountryList(countries);
+                    setTimeout(() => searchInput.focus(), 50);
+                });
+            }
+            
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                currentTargetInput = null;
+            }
+            
+            homeInput.addEventListener('click', () => openModal(homeInput));
+            awayInput.addEventListener('click', () => openModal(awayInput));
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                if (!eloData) return;
+                const filtered = eloData.filter(c => c.name.toLowerCase().includes(term));
+                renderCountryList(filtered);
+            });
+        });
+    </script>
+</body></html>

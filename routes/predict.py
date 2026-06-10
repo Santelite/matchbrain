@@ -10,6 +10,13 @@ model_home = joblib.load('model_home.pkl')
 model_away = joblib.load('model_away.pkl')
 estado_paises = pd.read_pickle('estado_actual_paises.pkl')
 
+@predecir.route('/elo', methods=['GET'])
+def elo():
+    elo_data = estado_paises.drop(
+        columns=['date', 'goles_anotados_form', 'goles_recibidos_form', 'potencial_ataque']
+    ).sort_values(by='elo', ascending=False).to_dict()
+    return jsonify(elo_data)
+
 @predecir.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
@@ -53,6 +60,10 @@ def predict():
     
     return jsonify({
         'partido': f"{pais_home} vs {pais_away}",
+        'elo' : {
+            'local': racha_home['elo'],
+            'visitante': racha_away['elo']
+        },
         'expectativa_goles': {
             'local': round(lambda_home, 2),
             'visitante': round(lambda_away, 2),
@@ -67,11 +78,13 @@ def predict():
         'formas': {
             'local': {
                 'ofensiva': racha_home['goles_anotados_form'],
-                'defensiva': racha_home['goles_recibidos_form']
+                'defensiva': racha_home['goles_recibidos_form'],
+                'potencial_ataque': racha_home['potencial_ataque']
             },
             'visitante': {
                 'ofensiva': racha_away['goles_anotados_form'],
-                'defensiva': racha_away['goles_recibidos_form']
+                'defensiva': racha_away['goles_recibidos_form'],
+                'potencial_ataque': racha_away['potencial_ataque']
             }
         }
     })
