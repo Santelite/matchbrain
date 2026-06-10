@@ -337,6 +337,17 @@
 <span class="material-symbols-outlined text-primary-container group-hover:rotate-180 transition-transform duration-500">refresh</span>
 </button>
 </div>
+
+<!-- Acerca de -->
+<section class="glass-card rounded-lg p-lg mt-lg text-center mx-auto max-w-4xl">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-sm">Acerca de MatchBrain</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-80 leading-relaxed">
+MatchBrain es un algoritmo de predicción de resultados y goles de fútbol impulsado por Machine Learning (LightGBM). El modelo analiza décadas de historia encontrando patrones ocultos a través de cuatro dimensiones clave: la forma reciente de cada equipo, el contexto del partido, el potencial de ataque y un riguroso sistema de puntuación ELO dinámico basado en un sistema de suma cero. <a href="https://github.com/Santelite/matchbrain/">Lee el GitHub para saber más   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+  </svg></a>
+</p>
+</section>
+
 </main>
 <!-- Footer -->
 <footer class="bg-surface-container-lowest border-t border-outline-variant/30 py-lg mt-auto">
@@ -345,6 +356,24 @@
 <p class="font-body-sm text-[12px] text-on-surface-variant opacity-60">© 2026 Santelite. Solo por el amor al juego.</p>
 </div>
 </footer>
+
+<!-- Betting Warning Modal -->
+<div id="betting-warning-modal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div class="glass-card w-full max-w-md rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-error/30">
+        <div class="p-6 flex flex-col items-center text-center gap-4">
+            <span class="material-symbols-outlined text-error text-[64px]">warning</span>
+            <h2 class="font-headline-lg-mobile text-error font-bold tracking-tight">Advertencia Importante</h2>
+            <p class="font-body-sm text-on-surface-variant leading-relaxed">
+                MatchBrain es un proyecto experimental con fines educativos y analíticos. 
+                <strong class="text-on-surface">Por muy precisas que parezcan las predicciones, NO debes utilizar este modelo ciegamente para realizar apuestas deportivas.</strong><br><br>
+                El fútbol es inherentemente caótico e impredecible; un gol temprano o una expulsión cambian todo el panorama. Utiliza esta herramienta bajo tu propio riesgo y con responsabilidad. Si vas a realizar apuestas hazlo con moderación y bajo tu propio criterio, y usar la información presentada solo como referencia.
+            </p>
+            <button id="accept-warning-btn" type="button" class="mt-4 bg-error text-on-error font-label-bold px-8 py-3 rounded-full hover:opacity-90 transition-opacity uppercase tracking-widest shadow-lg w-full">
+                He leído y Entendido
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Country Selection Modal -->
 <div id="country-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -367,6 +396,21 @@
 
 <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Betting Warning Logic
+            const warningModal = document.getElementById('betting-warning-modal');
+            const acceptWarningBtn = document.getElementById('accept-warning-btn');
+            
+            if (!localStorage.getItem('matchbrain_warning_accepted')) {
+                warningModal.classList.remove('hidden');
+                warningModal.classList.add('flex');
+            }
+
+            acceptWarningBtn.addEventListener('click', () => {
+                warningModal.classList.add('hidden');
+                warningModal.classList.remove('flex');
+                localStorage.setItem('matchbrain_warning_accepted', 'true');
+            });
+
             const predictBtn = document.getElementById('predict-btn');
             
             predictBtn.addEventListener('click', async (e) => {

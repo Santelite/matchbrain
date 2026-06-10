@@ -18,5 +18,7 @@ dist/
 build/
 *.egg-info/
 
+.vscode/
+
 away.png
 home.png
