@@ -253,7 +253,7 @@
 <!-- Forma Ofensiva -->
 <div class="flex flex-col gap-xs">
 <div class="flex items-center justify-between">
-<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Ofensiva</span>
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Ofensiva (Goles Anotados, más alto es mejor)</span>
 <span id="home-off-text" class="text-[12px] font-bold text-primary-container">2.5</span>
 </div>
 <div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
@@ -264,18 +264,18 @@
 <!-- Forma Defensiva -->
 <div class="flex flex-col gap-xs">
 <div class="flex items-center justify-between">
-<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Defensiva</span>
-<span id="home-def-text" class="text-[12px] font-bold text-primary-container">0.8</span>
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Defensiva (Goles Recibidos, más alto es peor)</span>
+<span id="home-def-text" class="text-[12px] font-bold text-error">0.8</span>
 </div>
 <div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
-<div id="home-def-bar" class="h-full bg-primary-container/60 transition-all duration-1000" style="width: 78%"></div>
+<div id="home-def-bar" class="h-full bg-error/80 shadow-[0_0_8px_rgba(255,180,171,0.4)] transition-all duration-1000" style="width: 78%"></div>
 </div>
 </div>
 
 <!-- Potencial Ataque -->
 <div class="flex flex-col gap-xs">
 <div class="flex items-center justify-between">
-<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Potencial de Ataque</span>
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Potencial de Ataque (Que tan poderosa es la ofensiva, más alto es mejor)</span>
 <span id="home-pot-text" class="text-[12px] font-bold text-primary-container">1.8</span>
 </div>
 <div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
@@ -307,11 +307,11 @@
 <!-- Forma Defensiva -->
 <div class="flex flex-col gap-xs">
 <div class="flex items-center justify-between sm:flex-row-reverse">
-<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Forma Defensiva</span>
-<span id="away-def-text" class="text-[12px] font-bold text-secondary-fixed-dim">1.5</span>
+<span class="font-label-bold text-[12px] text-on-surface-variant uppercase tracking-tighter">Goles Recibidos</span>
+<span id="away-def-text" class="text-[12px] font-bold text-error">1.5</span>
 </div>
 <div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden flex sm:justify-end">
-<div id="away-def-bar" class="h-full bg-secondary-fixed-dim/60 transition-all duration-1000" style="width: 41%"></div>
+<div id="away-def-bar" class="h-full bg-error/80 shadow-[0_0_8px_rgba(255,180,171,0.4)] transition-all duration-1000" style="width: 41%"></div>
 </div>
 </div>
 
